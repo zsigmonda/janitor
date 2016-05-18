@@ -4,11 +4,17 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Janitor.ProofOfConcept
+namespace Janitor.BusinessLogic
 {
+  public class DisposableSymbolData
+  {
+    public ISymbol DisposableSymbol { get; set; }
+    public IMethodSymbol DisposeMethodSymbol { get; set; }
+  }
+
   public class DisposableSymbolsCollector : CSharpSyntaxWalker
   {
-    public readonly Dictionary<ISymbol, IMethodSymbol> SymbolsRequiringDispose = new Dictionary<ISymbol, IMethodSymbol>();
+    public readonly List<DisposableSymbolData> SymbolsRequiringDispose = new List<DisposableSymbolData>();
 
     private readonly SymbolDisplayFormat sdf = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
@@ -32,7 +38,7 @@ namespace Janitor.ProofOfConcept
           ISymbol disposeMethod = intface.GetMembers("Dispose").FirstOrDefault();
           ISymbol implDisposeMethod = fieldSymbol.Type.FindImplementationForInterfaceMember(disposeMethod);
 
-          SymbolsRequiringDispose.Add(fieldSymbol, implDisposeMethod as IMethodSymbol);
+          SymbolsRequiringDispose.Add(new DisposableSymbolData() { DisposableSymbol = fieldSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol });
         }
       }
 
@@ -45,7 +51,7 @@ namespace Janitor.ProofOfConcept
           ISymbol disposeMethod = intface.GetMembers("Dispose").FirstOrDefault();
           ISymbol implDisposeMethod = localSymbol.Type.FindImplementationForInterfaceMember(disposeMethod);
 
-          SymbolsRequiringDispose.Add(localSymbol, implDisposeMethod as IMethodSymbol);
+          SymbolsRequiringDispose.Add(new DisposableSymbolData() { DisposableSymbol = localSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol });
         }
       }
       

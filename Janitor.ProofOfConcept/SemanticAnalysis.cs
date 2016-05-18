@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.IO;
 using Microsoft.CodeAnalysis.FindSymbols;
+using Janitor.BusinessLogic;
 
 namespace Janitor.ProofOfConcept
 {
@@ -79,27 +80,20 @@ namespace Janitor.ProofOfConcept
       DisposableSymbolsCollector walker = new DisposableSymbolsCollector(model);
       walker.Visit(tree.GetRoot());
 
-      UsingPatternCollector upc = new UsingPatternCollector(model);
+      UsingStatementsCollector upc = new UsingStatementsCollector(model);
       upc.Visit(tree.GetRoot());
 
       foreach (var item in walker.SymbolsRequiringDispose)
       {
-        Console.WriteLine("Symbol: {0} , Disposable implemented in: {1}", item.Key.ToDisplayString(), item.Value.ToDisplayString());
+        Console.WriteLine("Symbol: {0} , Disposable implemented in: {1}", item.DisposableSymbol.ToDisplayString(), item.DisposeMethodSymbol.ToDisplayString());
 
-        string s = item.Key.ToDisplayString();
-        string s2 = item.Value.ToDisplayString();
-
-        ISymbol sym = item.Value;
-
-        MethodInvocationCollector mic = new MethodInvocationCollector(model, item.Value, item.Key);
+        MethodInvocationsCollector mic = new MethodInvocationsCollector(model, item.DisposeMethodSymbol, item.DisposableSymbol);
         mic.Visit(tree.GetRoot());
 
-        if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(item.Key))
+        if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(item.DisposableSymbol))
         {
           Console.WriteLine("Not disposed properly.");
         }
-
-
       }
 
       Console.ReadKey();
