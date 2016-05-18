@@ -4,6 +4,9 @@
     <Identity Id="Janitor.f94e22ed-4a5e-4893-8020-a24501b8cc34" Version="1.0" Language="en-US" Publisher="zsigmonda"/>
     <DisplayName>Janitor</DisplayName>
     <Description xml:space="preserve">Janitor is a Visual Studio extension which helps you finding incorrect implementations. Janitor is based on the .NET Compiler Platform ("Roslyn").</Description>
+    <MoreInfo>https://github.com/zsigmonda/janitor</MoreInfo>
+    <License>LICENSE.txt</License>
+    <Icon>icon.png</Icon>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[14.0,]" Id="Microsoft.VisualStudio.Pro" />

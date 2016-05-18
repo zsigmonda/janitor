@@ -6,14 +6,14 @@
     <title>Janitor</title>
     <authors>Attila Zsigmond</authors>
     <owners>Attila Zsigmond</owners>
-    <licenseUrl>https://github.com/zsigmonda/janitor/blob/master/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/zsigmonda/janitor/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/zsigmonda/janitor</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <iconUrl>https://github.com/zsigmonda/janitor/blob/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Janitor</description>
+    <description>Janitor is a Visual Studio extension which helps you finding incorrect implementations. Janitor is based on the .NET Compiler Platform ("Roslyn").</description>
     <releaseNotes>This is the first release of this package.</releaseNotes>
     <copyright>Copyright</copyright>
-    <tags>Janitor, analyzers</tags>
+    <tags></tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
