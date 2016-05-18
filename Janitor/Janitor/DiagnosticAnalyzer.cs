@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Janitor.BusinessLogic;
 
 namespace Janitor
 {
@@ -20,7 +21,7 @@ namespace Janitor
     private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
     private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
     private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-    private const string Category = "Naming";
+    private const string Category = "Performance";
 
     private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
 
@@ -30,21 +31,30 @@ namespace Janitor
     {
       // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
       // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-      context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+      context.RegisterSemanticModelAction(AnalyzeDispose);
     }
 
-    private static void AnalyzeSymbol(SymbolAnalysisContext context)
+    private static void AnalyzeDispose(SemanticModelAnalysisContext context)
     {
-      // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-      var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+      SyntaxTree tree = context.SemanticModel.SyntaxTree;
+      SemanticModel model = context.SemanticModel;
 
-      // Find just those named type symbols with names containing lowercase letters.
-      if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+      DisposableSymbolsCollector walker = new DisposableSymbolsCollector(model);
+      walker.Visit(tree.GetRoot());
+
+      UsingStatementsCollector upc = new UsingStatementsCollector(model);
+      upc.Visit(tree.GetRoot());
+
+      foreach (var item in walker.SymbolsRequiringDispose)
       {
-        // For all such symbols, produce a diagnostic.
-        var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+        MethodInvocationsCollector mic = new MethodInvocationsCollector(model, item.DisposeMethodSymbol, item.DisposableSymbol);
+        mic.Visit(tree.GetRoot());
 
-        context.ReportDiagnostic(diagnostic);
+        if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(item.DisposableSymbol))
+        {
+          var diagnostic = Diagnostic.Create(Rule, item.DisposableSymbol.Locations[0], item.DisposableSymbol.Name);
+          context.ReportDiagnostic(diagnostic);
+        }
       }
     }
   }
