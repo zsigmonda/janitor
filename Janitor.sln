@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janitor.BusinessLogic", "Janitor.BusinessLogic\Janitor.BusinessLogic.csproj", "{80CB68F3-65E6-4E3D-A082-316E49DB02AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,11 +52,20 @@ Global
 		{6FF9C964-09F7-48C3-9327-73C091CAA26B}.Release|x86.ActiveCfg = Release|Any CPU
 		{6FF9C964-09F7-48C3-9327-73C091CAA26B}.Release|x86.Build.0 = Release|Any CPU
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Debug|Any CPU.Build.0 = Debug|x86
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Debug|x86.ActiveCfg = Debug|x86
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Debug|x86.Build.0 = Debug|x86
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Release|Any CPU.ActiveCfg = Release|x86
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Release|x86.ActiveCfg = Release|x86
 		{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}.Release|x86.Build.0 = Release|x86
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{80CB68F3-65E6-4E3D-A082-316E49DB02AD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
