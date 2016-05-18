@@ -71,12 +71,12 @@ namespace Janitor.Test
 
     protected override CodeFixProvider GetCSharpCodeFixProvider()
     {
-      return new JanitorCodeFixProvider();
+      return new MissingDisposeCodeFixProvider();
     }
 
     protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
     {
-      return new JanitorAnalyzer();
+      return new MissingDisposeAnalyzer();
     }
   }
 }

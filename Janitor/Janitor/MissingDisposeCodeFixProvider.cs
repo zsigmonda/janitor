@@ -15,14 +15,14 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Janitor
 {
-  [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(JanitorCodeFixProvider)), Shared]
-  public class JanitorCodeFixProvider : CodeFixProvider
+  [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingDisposeCodeFixProvider)), Shared]
+  public class MissingDisposeCodeFixProvider : CodeFixProvider
   {
     private const string title = "Make uppercase";
 
     public sealed override ImmutableArray<string> FixableDiagnosticIds
     {
-      get { return ImmutableArray.Create(JanitorAnalyzer.DiagnosticId); }
+      get { return ImmutableArray.Create(MissingDisposeAnalyzer.DiagnosticId); }
     }
 
     public sealed override FixAllProvider GetFixAllProvider()

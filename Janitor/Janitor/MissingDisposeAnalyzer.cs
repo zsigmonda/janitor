@@ -12,7 +12,7 @@ using Janitor.BusinessLogic;
 namespace Janitor
 {
   [DiagnosticAnalyzer(LanguageNames.CSharp)]
-  public class JanitorAnalyzer : DiagnosticAnalyzer
+  public class MissingDisposeAnalyzer : DiagnosticAnalyzer
   {
     public const string DiagnosticId = "Janitor";
 
