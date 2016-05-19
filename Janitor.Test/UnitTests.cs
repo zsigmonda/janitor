@@ -69,11 +69,6 @@ namespace Janitor.Test
       VerifyCSharpFix(test, fixtest);
     }
 
-    protected override CodeFixProvider GetCSharpCodeFixProvider()
-    {
-      return new MissingDisposeCodeFixProvider();
-    }
-
     protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
     {
       return new MissingDisposeAnalyzer();

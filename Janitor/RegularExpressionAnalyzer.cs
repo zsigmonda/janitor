@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -38,30 +39,38 @@ namespace Janitor
 
       MemberAccessExpressionSyntax memberAccessExpr = invocationExpression.Expression as MemberAccessExpressionSyntax;
       if (memberAccessExpr == null) return;
-      if (memberAccessExpr.Name.ToString() != "Match") return;
+      string memberAccessExprName = memberAccessExpr.Name.ToString();
+      if (memberAccessExprName != "Match" && memberAccessExprName != "Matches" && memberAccessExprName != "IsMatch")
+        return;
 
       IMethodSymbol memberSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpr, context.CancellationToken).Symbol as IMethodSymbol;
 
-      if (!memberSymbol?.ToString().StartsWith("System.Text.RegularExpressions.Regex.Match") ?? true) return;
-      ArgumentListSyntax argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
-      if ((argumentList?.Arguments.Count ?? 0) < 2) return;
-      LiteralExpressionSyntax regexLiteral = argumentList.Arguments[1].Expression as LiteralExpressionSyntax;
-
-      if (regexLiteral == null) return;
-      var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
-
-      if (!regexOpt.HasValue) return;
-      var regex = regexOpt.Value as string;
-      if (regex == null) return;
-
-      try
+      if (memberSymbol != null && (
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.Match(") ||
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.Matches(") ||
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.IsMatch(")
+        ))
       {
-        System.Text.RegularExpressions.Regex.Match("", regex);
-      }
-      catch (ArgumentException e)
-      {
-        Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
-        context.ReportDiagnostic(diagnostic);
+        ArgumentListSyntax argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+        if ((argumentList?.Arguments.Count ?? 0) < 2) return;
+        LiteralExpressionSyntax regexLiteral = argumentList.Arguments[1].Expression as LiteralExpressionSyntax;
+
+        if (regexLiteral == null) return;
+        var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
+
+        if (!regexOpt.HasValue) return;
+        var regex = regexOpt.Value as string;
+        if (regex == null) return;
+
+        try
+        {
+          System.Text.RegularExpressions.Regex.Match("", regex);
+        }
+        catch (ArgumentException e)
+        {
+          Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
+          context.ReportDiagnostic(diagnostic);
+        }
       }
     }
   }
