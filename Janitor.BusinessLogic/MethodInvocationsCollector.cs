@@ -21,18 +21,20 @@ namespace Janitor.BusinessLogic
     public IMethodSymbol InvokedMethod { get; private set; }
     public ISymbol FieldOrLocalVariable { get; private set; }
     public bool IgnoreUnreachable { get; private set; }
+    public System.Threading.CancellationToken CancellationToken { get; private set; }
 
-    public MethodInvocationsCollector(SemanticModel model, IMethodSymbol method, ISymbol containingObject, bool ignoreUnreachable = true)
+    public MethodInvocationsCollector(SemanticModel model, IMethodSymbol method, ISymbol containingObject, bool ignoreUnreachable = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
       this.InvokedMethod = method;
       this.FieldOrLocalVariable = containingObject;
       this.IgnoreUnreachable = ignoreUnreachable;
+      this.CancellationToken = cancellationToken;
     }
 
     public override void VisitInvocationExpression(InvocationExpressionSyntax node)
     {
-      IMethodSymbol methodSymbol = Model.GetSymbolInfo(node).Symbol as IMethodSymbol;
+      IMethodSymbol methodSymbol = Model.GetSymbolInfo(node, CancellationToken).Symbol as IMethodSymbol;
       if (methodSymbol != null && methodSymbol.Equals(InvokedMethod))
       {
         IdentifierNameSyntax objectName = node.Expression.DescendantNodesAndSelf().OfType<IdentifierNameSyntax>().First();

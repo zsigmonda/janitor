@@ -117,16 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzerDescription" xml:space="preserve">
-    <value>Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using using statement.</value>
+  <data name="MissingDisposeAnalyzerDescription" xml:space="preserve">
+    <value>Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using within a using block statement.</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-  <data name="AnalyzerMessageFormat" xml:space="preserve">
+  <data name="MissingDisposeAnalyzerMessageFormat" xml:space="preserve">
     <value>Object name '{0}' not diposed properly.</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
-  <data name="AnalyzerTitle" xml:space="preserve">
+  <data name="MissingDisposeAnalyzerTitle" xml:space="preserve">
     <value>Object not disposed properly.</value>
+    <comment>The title of the diagnostic.</comment>
+  </data>
+  <data name="RegularExpressionAnalyzerDescription" xml:space="preserve">
+    <value>Invalid regular expression syntax. For more information on Microsoft .NET regular expressions, visit https://msdn.microsoft.com/en-us/library/hs600312.aspx </value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="RegularExpressionAnalyzerMessageFormat" xml:space="preserve">
+    <value>Invalid regular expression syntax: {0}</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
+  <data name="RegularExpressionAnalyzerTitle" xml:space="preserve">
+    <value>Invalid regular expression syntax.</value>
     <comment>The title of the diagnostic.</comment>
   </data>
 </root>

@@ -62,29 +62,56 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using using statement..
+        ///   Looks up a localized string similar to Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using within a using block statement..
         /// </summary>
-        internal static string AnalyzerDescription {
+        internal static string MissingDisposeAnalyzerDescription {
             get {
-                return ResourceManager.GetString("AnalyzerDescription", resourceCulture);
+                return ResourceManager.GetString("MissingDisposeAnalyzerDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Object name &apos;{0}&apos; not diposed properly..
         /// </summary>
-        internal static string AnalyzerMessageFormat {
+        internal static string MissingDisposeAnalyzerMessageFormat {
             get {
-                return ResourceManager.GetString("AnalyzerMessageFormat", resourceCulture);
+                return ResourceManager.GetString("MissingDisposeAnalyzerMessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Object not disposed properly..
         /// </summary>
-        internal static string AnalyzerTitle {
+        internal static string MissingDisposeAnalyzerTitle {
             get {
-                return ResourceManager.GetString("AnalyzerTitle", resourceCulture);
+                return ResourceManager.GetString("MissingDisposeAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid regular expression syntax. For more information on Microsoft .NET regular expressions, visit https://msdn.microsoft.com/en-us/library/hs600312.aspx .
+        /// </summary>
+        internal static string RegularExpressionAnalyzerDescription {
+            get {
+                return ResourceManager.GetString("RegularExpressionAnalyzerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid regular expression syntax: {0}.
+        /// </summary>
+        internal static string RegularExpressionAnalyzerMessageFormat {
+            get {
+                return ResourceManager.GetString("RegularExpressionAnalyzerMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid regular expression syntax..
+        /// </summary>
+        internal static string RegularExpressionAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("RegularExpressionAnalyzerTitle", resourceCulture);
             }
         }
     }

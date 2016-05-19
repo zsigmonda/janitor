@@ -12,11 +12,13 @@ namespace Janitor.BusinessLogic
 
     public SemanticModel Model { get; private set; }
     public bool IgnoreUnreachable { get; private set; }
+    public System.Threading.CancellationToken CancellationToken { get; private set; }
 
-    public UsingStatementsCollector(SemanticModel model, bool ignoreUnreachable = true)
+    public UsingStatementsCollector(SemanticModel model, bool ignoreUnreachable = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
       this.IgnoreUnreachable = ignoreUnreachable;
+      this.CancellationToken = cancellationToken;
     }
 
     public override void VisitUsingStatement(UsingStatementSyntax node)
@@ -45,20 +47,20 @@ namespace Janitor.BusinessLogic
           if (bracketed is VariableDeclarationSyntax)
           {
             VariableDeclaratorSyntax declarator = (bracketed as VariableDeclarationSyntax).DescendantNodes().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
-            symbol = Model.GetDeclaredSymbol(declarator);
+            symbol = Model.GetDeclaredSymbol(declarator, CancellationToken);
           }
           else
           {
             if (bracketed is AssignmentExpressionSyntax)
             {
               if ((bracketed as AssignmentExpressionSyntax).Left != null)
-                symbol = Model.GetSymbolInfo((bracketed as AssignmentExpressionSyntax).Left).Symbol;
+                symbol = Model.GetSymbolInfo((bracketed as AssignmentExpressionSyntax).Left, CancellationToken).Symbol;
             }
             else
             {
               if (bracketed is IdentifierNameSyntax)
               {
-                symbol = Model.GetSymbolInfo(bracketed as IdentifierNameSyntax).Symbol;
+                symbol = Model.GetSymbolInfo(bracketed as IdentifierNameSyntax, CancellationToken).Symbol;
               }
             }
           }

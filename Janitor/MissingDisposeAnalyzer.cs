@@ -15,12 +15,12 @@ namespace Janitor
   public class MissingDisposeAnalyzer : DiagnosticAnalyzer
   {
     public const string DiagnosticId = "Janitor";
+    
+    //Lokalizált string-ek
+    private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.MissingDisposeAnalyzerTitle), Resources.ResourceManager, typeof(Resources));
+    private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.MissingDisposeAnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
+    private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.MissingDisposeAnalyzerDescription), Resources.ResourceManager, typeof(Resources));
 
-    // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
-    // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
-    private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
-    private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-    private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
     private const string Category = "Performance";
 
     private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
@@ -29,32 +29,43 @@ namespace Janitor
 
     public override void Initialize(AnalysisContext context)
     {
-      // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-      // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-      context.RegisterSemanticModelAction(AnalyzeDispose);
+      context.RegisterSyntaxNodeAction(AnalyzeMissingDispose, SyntaxKind.VariableDeclarator);
     }
 
-    private static void AnalyzeDispose(SemanticModelAnalysisContext context)
+    private void AnalyzeMissingDispose(SyntaxNodeAnalysisContext context)
     {
-      SyntaxTree tree = context.SemanticModel.SyntaxTree;
-      SemanticModel model = context.SemanticModel;
-
-      DisposableSymbolsCollector walker = new DisposableSymbolsCollector(model);
-      walker.Visit(tree.GetRoot());
-
-      UsingStatementsCollector upc = new UsingStatementsCollector(model);
-      upc.Visit(tree.GetRoot());
-
-      foreach (var item in walker.SymbolsRequiringDispose)
+      try
       {
-        MethodInvocationsCollector mic = new MethodInvocationsCollector(model, item.DisposeMethodSymbol, item.DisposableSymbol);
-        mic.Visit(tree.GetRoot());
+        SyntaxTree tree = context.SemanticModel.SyntaxTree;
+        SemanticModel model = context.SemanticModel;
 
-        if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(item.DisposableSymbol))
+        DisposableSymbolsCollector collector = new DisposableSymbolsCollector(model, context.CancellationToken);
+        DisposableSymbolData data = collector.ProcessVariableDeclarator(context.Node as VariableDeclaratorSyntax);
+
+        if (data != null)
         {
-          var diagnostic = Diagnostic.Create(Rule, item.DisposableSymbol.Locations[0], item.DisposableSymbol.Name);
-          context.ReportDiagnostic(diagnostic);
+          UsingStatementsCollector upc = new UsingStatementsCollector(model, true, context.CancellationToken);
+          upc.Visit(tree.GetRoot());
+
+          MethodInvocationsCollector mic = new MethodInvocationsCollector(model, data.DisposeMethodSymbol, data.DisposableSymbol, true, context.CancellationToken);
+          mic.Visit(tree.GetRoot());
+
+          if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(data.DisposableSymbol))
+          {
+            Diagnostic diagnostic = Diagnostic.Create(Rule, context.Node.GetLocation(), data.DisposableSymbol.Name);
+            context.ReportDiagnostic(diagnostic);
+          }
         }
+      }
+      catch (OperationCanceledException)
+      {
+        //TODO Output windowba írás
+        return;
+      }
+      catch (Exception)
+      {
+        //TODO Output windowba írás
+        return;
       }
     }
   }

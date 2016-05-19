@@ -19,15 +19,17 @@ namespace Janitor.BusinessLogic
     private readonly SymbolDisplayFormat sdf = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
     public SemanticModel Model { get; private set; }
+    public System.Threading.CancellationToken CancellationToken { get; private set; }
 
-    public DisposableSymbolsCollector(SemanticModel model)
+    public DisposableSymbolsCollector(SemanticModel model, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
+      this.CancellationToken = cancellationToken;
     }
 
-    public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
+    public DisposableSymbolData ProcessVariableDeclarator(VariableDeclaratorSyntax node)
     {
-      ISymbol info = Model.GetDeclaredSymbol(node);     
+      ISymbol info = Model.GetDeclaredSymbol(node, CancellationToken);
 
       if (info is IFieldSymbol)
       {
@@ -38,7 +40,7 @@ namespace Janitor.BusinessLogic
           ISymbol disposeMethod = intface.GetMembers("Dispose").FirstOrDefault();
           ISymbol implDisposeMethod = fieldSymbol.Type.FindImplementationForInterfaceMember(disposeMethod);
 
-          SymbolsRequiringDispose.Add(new DisposableSymbolData() { DisposableSymbol = fieldSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol });
+          return new DisposableSymbolData() { DisposableSymbol = fieldSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol };
         }
       }
 
@@ -51,8 +53,20 @@ namespace Janitor.BusinessLogic
           ISymbol disposeMethod = intface.GetMembers("Dispose").FirstOrDefault();
           ISymbol implDisposeMethod = localSymbol.Type.FindImplementationForInterfaceMember(disposeMethod);
 
-          SymbolsRequiringDispose.Add(new DisposableSymbolData() { DisposableSymbol = localSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol });
+          return new DisposableSymbolData() { DisposableSymbol = localSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol };
         }
+      }
+
+      return null;
+    }
+
+    public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
+    {
+      DisposableSymbolData data = ProcessVariableDeclarator(node);
+
+      if (data != null)
+      {
+        SymbolsRequiringDispose.Add(data);
       }
       
       base.VisitVariableDeclarator(node);
