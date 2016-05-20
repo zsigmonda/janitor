@@ -129,6 +129,18 @@
     <value>Object not disposed properly.</value>
     <comment>The title of the diagnostic.</comment>
   </data>
+  <data name="MissingTryCatchAnalyzerDescription" xml:space="preserve">
+    <value>Code block is not covered with a try-catch statement.</value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="MissingTryCatchAnalyzerMessageFormat" xml:space="preserve">
+    <value>Code block is not covered with a try-catch statement.</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
+  <data name="MissingTryCatchAnalyzerTitle" xml:space="preserve">
+    <value>Code block is not covered with a try-catch statement.</value>
+    <comment>The title of the diagnostic.</comment>
+  </data>
   <data name="RegularExpressionAnalyzerDescription" xml:space="preserve">
     <value>Invalid regular expression syntax. For more information on Microsoft .NET regular expressions, visit https://msdn.microsoft.com/en-us/library/hs600312.aspx </value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
