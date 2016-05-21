@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Janitor")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Abesse Zrt.")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Janitor")]
-[assembly: AssemblyCopyright("Copyright © Abesse Zrt. 2016")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

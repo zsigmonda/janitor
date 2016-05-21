@@ -24,25 +24,6 @@ namespace Janitor.ProofOfConcept
       {
         m_sourceCode = sr.ReadToEnd();
       }
-
-      /*
-      StreamReader sr2 = new StreamReader(inputFileName);
-      using (sr2)
-      {
-        sr2.ReadToEnd();
-      }
-
-      StreamReader sr3;
-      using (sr3 = new StreamReader(inputFileName))
-      {
-        sr3.ReadToEnd();
-      }
-
-      using (sr3)
-      {
-        sr2.ReadToEnd();
-      }
-      */
     }
 
     public void DoAnalysis()
@@ -66,35 +47,12 @@ namespace Janitor.ProofOfConcept
       //Create new document
       var doc = ws.AddDocument(project.Id, "NewDoc", sourceText);
 
-
-
       SyntaxTree tree = CSharpSyntaxTree.ParseText(m_sourceCode);
-
       var root = (CompilationUnitSyntax)tree.GetRoot();
 
-
       var compilation = CSharpCompilation.Create("HelloWorld", new[] { tree }, new[] { refMscorlib });
-
       SemanticModel model = compilation.GetSemanticModel(tree);
 
-      DisposableSymbolsCollector walker = new DisposableSymbolsCollector(model);
-      walker.Visit(tree.GetRoot());
-
-      UsingStatementsCollector upc = new UsingStatementsCollector(model);
-      upc.Visit(tree.GetRoot());
-
-      foreach (var item in walker.SymbolsRequiringDispose)
-      {
-        Console.WriteLine("Symbol: {0} , Disposable implemented in: {1}", item.DisposableSymbol.ToDisplayString(), item.DisposeMethodSymbol.ToDisplayString());
-
-        MethodInvocationsCollector mic = new MethodInvocationsCollector(model, item.DisposeMethodSymbol, item.DisposableSymbol);
-        mic.Visit(tree.GetRoot());
-
-        if (mic.Invocations.Count == 0 && !upc.SymbolsWithUsingPattern.Contains(item.DisposableSymbol))
-        {
-          Console.WriteLine("Not disposed properly.");
-        }
-      }
 
       Console.ReadKey();
     }
