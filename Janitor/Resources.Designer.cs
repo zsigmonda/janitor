@@ -89,33 +89,6 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
-        /// </summary>
-        internal static string MissingTryCatchAnalyzerDescription {
-            get {
-                return ResourceManager.GetString("MissingTryCatchAnalyzerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
-        /// </summary>
-        internal static string MissingTryCatchAnalyzerMessageFormat {
-            get {
-                return ResourceManager.GetString("MissingTryCatchAnalyzerMessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
-        /// </summary>
-        internal static string MissingTryCatchAnalyzerTitle {
-            get {
-                return ResourceManager.GetString("MissingTryCatchAnalyzerTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid regular expression syntax. For more information on Microsoft .NET regular expressions, visit https://msdn.microsoft.com/en-us/library/hs600312.aspx .
         /// </summary>
         internal static string RegularExpressionAnalyzerDescription {

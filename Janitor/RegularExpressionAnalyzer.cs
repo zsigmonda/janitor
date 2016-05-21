@@ -25,68 +25,51 @@ namespace Janitor
     private const string Category = "Syntax";
 
     private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
-    private static SymbolDisplayFormat sdf = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
     public override void Initialize(AnalysisContext context)
     {
-      context.RegisterSyntaxNodeAction(AnalyzeRegularExpression, SyntaxKind.InvocationExpression, SyntaxKind.ObjectCreationExpression);
+      context.RegisterSyntaxNodeAction(AnalyzeRegularExpression, SyntaxKind.InvocationExpression);
     }
 
     private void AnalyzeRegularExpression(SyntaxNodeAnalysisContext context)
     {
-      IMethodSymbol methodSymbol = context.SemanticModel.GetSymbolInfo(context.Node, context.CancellationToken).Symbol as IMethodSymbol;
+      InvocationExpressionSyntax invocationExpression = (InvocationExpressionSyntax)context.Node;
 
-      if (methodSymbol != null && (methodSymbol.Name == "Match" || methodSymbol.Name == "IsMatch" || methodSymbol.Name == "Matches" || methodSymbol.Name == ".ctor"))
+      MemberAccessExpressionSyntax memberAccessExpr = invocationExpression.Expression as MemberAccessExpressionSyntax;
+      if (memberAccessExpr == null) return;
+      string memberAccessExprName = memberAccessExpr.Name.ToString();
+      if (memberAccessExprName != "Match" && memberAccessExprName != "Matches" && memberAccessExprName != "IsMatch")
+        return;
+
+      IMethodSymbol memberSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpr, context.CancellationToken).Symbol as IMethodSymbol;
+
+      if (memberSymbol != null && (
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.Match(") ||
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.Matches(") ||
+        memberSymbol.ToString().StartsWith("System.Text.RegularExpressions.Regex.IsMatch(")
+        ))
       {
-        if (methodSymbol.ContainingType != null && methodSymbol.ContainingType.ToDisplayString(sdf) == "System.Text.RegularExpressions.Regex")
+        ArgumentListSyntax argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+        if ((argumentList?.Arguments.Count ?? 0) < 2) return;
+        LiteralExpressionSyntax regexLiteral = argumentList.Arguments[1].Expression as LiteralExpressionSyntax;
+
+        if (regexLiteral == null) return;
+        var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
+
+        if (!regexOpt.HasValue) return;
+        var regex = regexOpt.Value as string;
+        if (regex == null) return;
+
+        try
         {
-          IParameterSymbol patternParameter = methodSymbol.Parameters.SingleOrDefault(p => p.Name == "pattern");
-
-          if (patternParameter != null)
-          {
-            ArgumentListSyntax argumentList = null;
-            if (context.Node.Kind() == SyntaxKind.ObjectCreationExpression)
-            {
-              argumentList = (context.Node as ObjectCreationExpressionSyntax).ArgumentList as ArgumentListSyntax;
-            }
-            else
-            {
-              if (context.Node.Kind() == SyntaxKind.InvocationExpression)
-              {
-                argumentList = (context.Node as InvocationExpressionSyntax).ArgumentList as ArgumentListSyntax;
-              }
-            }
-
-            if (argumentList != null)
-            {
-              LiteralExpressionSyntax regexLiteral = argumentList.Arguments[patternParameter.Ordinal].Expression as LiteralExpressionSyntax;
-
-              if (regexLiteral != null)
-              {
-                var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
-
-                if (regexOpt.HasValue)
-                {
-                  string regex = regexOpt.Value as string;
-                  if (regex != null)
-                  {
-
-                    try
-                    {
-                      System.Text.RegularExpressions.Regex.Match("", regex);
-                    }
-                    catch (ArgumentException e)
-                    {
-                      Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
-                      context.ReportDiagnostic(diagnostic);
-                    }
-                  }
-                }
-              }
-            }
-          }
+          System.Text.RegularExpressions.Regex.Match("", regex);
+        }
+        catch (ArgumentException e)
+        {
+          Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
+          context.ReportDiagnostic(diagnostic);
         }
       }
     }
