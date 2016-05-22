@@ -94,12 +94,11 @@
     <None Include="Input\Input1.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="TryBlockCollector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SemanticAnalysis.cs" />
-    <Compile Include="SyntaxAnalysis.cs" />
-    <Compile Include="SyntaxTransformation.cs" />
+    <Compile Include="Analysis.cs" />
+    <Compile Include="SymbolReferenceCollector.cs" />
+    <Compile Include="Transformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -11,7 +11,7 @@ namespace Janitor
   [DiagnosticAnalyzer(LanguageNames.CSharp)]
   public class MissingDisposeAnalyzer : DiagnosticAnalyzer
   {
-    public const string DiagnosticId = "Janitor";
+    public const string DiagnosticId = "JN0001";
     
     //Lokalizált string-ek
     private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.MissingDisposeAnalyzerTitle), Resources.ResourceManager, typeof(Resources));
@@ -20,13 +20,13 @@ namespace Janitor
 
     private const string Category = "Performance";
 
-    private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+    private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
     public override void Initialize(AnalysisContext context)
     {
-      context.RegisterSyntaxNodeAction(AnalyzeMissingDispose, SyntaxKind.VariableDeclarator);
+      context.RegisterSyntaxNodeAction(AnalyzeMissingDispose, SyntaxKind.VariableDeclarator, SyntaxKind.PropertyDeclaration);
     }
 
     private void AnalyzeMissingDispose(SyntaxNodeAnalysisContext context)
@@ -37,7 +37,18 @@ namespace Janitor
         SemanticModel model = context.SemanticModel;
 
         DisposableSymbolsCollector collector = new DisposableSymbolsCollector(model, context.CancellationToken);
-        DisposableSymbolData data = collector.ProcessVariableDeclarator(context.Node as VariableDeclaratorSyntax);
+
+
+        DisposableSymbolData data = null;
+
+        if (context.Node.Kind() == SyntaxKind.VariableDeclarator)
+        {
+          data = collector.ProcessVariableDeclarator(context.Node as VariableDeclaratorSyntax);
+        }
+        else
+        {
+          data = collector.ProcessPropertyDeclaration(context.Node as PropertyDeclarationSyntax);
+        }
 
         if (data != null)
         {

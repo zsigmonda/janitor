@@ -14,11 +14,11 @@ using Janitor.BusinessLogic;
 
 namespace Janitor.ProofOfConcept
 {
-  class SemanticAnalysis
+  class Analysis
   {
     private string m_sourceCode;
 
-    public SemanticAnalysis(string inputFileName)
+    public Analysis(string inputFileName)
     {
       using (StreamReader sr = new StreamReader(inputFileName))
       {
@@ -54,7 +54,51 @@ namespace Janitor.ProofOfConcept
       SemanticModel model = compilation.GetSemanticModel(tree);
 
 
+      BlockCollector collector = new BlockCollector();
+      collector.Visit(root);
+
+      List<TryStatementSyntax> tryStatements = root.DescendantNodesAndSelf().OfType<TryStatementSyntax>().ToList();
+
+      foreach (BlockSyntax block in collector.Blocks)
+      {
+        if (tryStatements.Count(span => span.Contains(block)) == 0)
+        {
+          //nincs trycatch körülötte - meg kell nézni a szülő szimbólum összes referenciáját
+
+          ISymbol _sym = model.GetEnclosingSymbol(block.SpanStart);
+
+          MethodInvocationsCollector mic = new MethodInvocationsCollector(model, _sym as IMethodSymbol, null, false);
+          mic.Visit(root);
+
+          bool allReferencesCovered = mic.Invocations.Count > 0;
+          foreach (var micres in mic.Invocations)
+          {
+            if (tryStatements.Count(span => span.Contains(micres.InvocationSyntax)) == 0)
+            {
+              allReferencesCovered = false;
+              break;
+            }
+          }
+
+          if (!allReferencesCovered)
+          {
+            Console.WriteLine("Block not covered: {0}", block.GetLocation());
+          }
+        }
+      }
+
+
       Console.ReadKey();
+    }
+  }
+
+  class BlockCollector : CSharpSyntaxWalker
+  {
+    public readonly List<BlockSyntax> Blocks = new List<BlockSyntax>();
+    public override void VisitBlock(BlockSyntax node)
+    {
+      Blocks.Add(node);
+      base.VisitBlock(node);
     }
   }
 }

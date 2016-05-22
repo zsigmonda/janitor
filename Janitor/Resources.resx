@@ -130,7 +130,7 @@
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="MissingTryCatchAnalyzerDescription" xml:space="preserve">
-    <value>Code block is not covered with a try-catch statement.</value>
+    <value>Code block is not covered with a try-catch statement. This notfication is not shown for code blocks being either in catch or finally statements.</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="MissingTryCatchAnalyzerMessageFormat" xml:space="preserve">

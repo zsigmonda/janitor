@@ -19,15 +19,15 @@ namespace Janitor.BusinessLogic
 
     public SemanticModel Model { get; private set; }
     public IMethodSymbol InvokedMethod { get; private set; }
-    public ISymbol FieldOrLocalVariable { get; private set; }
+    public ISymbol ContainingObject { get; private set; }
     public bool IgnoreUnreachable { get; private set; }
     public System.Threading.CancellationToken CancellationToken { get; private set; }
 
-    public MethodInvocationsCollector(SemanticModel model, IMethodSymbol method, ISymbol containingObject, bool ignoreUnreachable = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+    public MethodInvocationsCollector(SemanticModel model, IMethodSymbol method, ISymbol containingObject = null, bool ignoreUnreachable = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
       this.InvokedMethod = method;
-      this.FieldOrLocalVariable = containingObject;
+      this.ContainingObject = containingObject;
       this.IgnoreUnreachable = ignoreUnreachable;
       this.CancellationToken = cancellationToken;
     }
@@ -37,10 +37,22 @@ namespace Janitor.BusinessLogic
       IMethodSymbol methodSymbol = Model.GetSymbolInfo(node, CancellationToken).Symbol as IMethodSymbol;
       if (methodSymbol != null && methodSymbol.Equals(InvokedMethod))
       {
-        IdentifierNameSyntax objectName = node.Expression.DescendantNodesAndSelf().OfType<IdentifierNameSyntax>().First();
+        //a szimbólum, aminek a metódusára hivatkozunk (ez egy tagváltozó vagy valamilyen objektum-referencia lesz)
+        ISymbol objectSymbol = null;
 
-        ISymbol objectSymbol = Model.GetSymbolInfo(objectName).Symbol;
-        if (objectSymbol != null && objectSymbol.Equals(FieldOrLocalVariable))
+        if (ContainingObject != null)
+        {
+          //szűrünk egy adott objektumon történő metódushívásra
+          IdentifierNameSyntax objectName = node.Expression.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+          objectSymbol = Model.GetSymbolInfo(objectName).Symbol;
+        }
+        else
+        {
+          //nem szűrünk típusra: visszaadom az osztály szimbólumát
+          objectSymbol = methodSymbol.ContainingSymbol;
+        }
+        
+        if (objectSymbol != null && (objectSymbol.Equals(ContainingObject) || ContainingObject == null))
         {
           if (IgnoreUnreachable)
           {

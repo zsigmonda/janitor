@@ -16,7 +16,7 @@ namespace Janitor
   [DiagnosticAnalyzer(LanguageNames.CSharp)]
   public class MissingTryCatchAnalyzer : DiagnosticAnalyzer
   {
-    public const string DiagnosticId = "Janitor";
+    public const string DiagnosticId = "JN0002";
 
     //Lokalizált string-ek
     private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.MissingTryCatchAnalyzerTitle), Resources.ResourceManager, typeof(Resources));
@@ -26,7 +26,7 @@ namespace Janitor
     private const string Category = "Performance";
 
     private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
-    private List<TextSpan> tryBlockSpans = null;
+    private List<TryStatementSyntax> tryStatements = null;
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
@@ -38,45 +38,40 @@ namespace Janitor
 
     private void AnalyzeMissingTryCatch(SyntaxNodeAnalysisContext context)
     {
-      if (tryBlockSpans == null)
+      if (tryStatements == null)
       {
-        tryBlockSpans = context.SemanticModel.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<TryStatementSyntax>().Where(tc => tc.Block != null).Select(tc => tc.Block.FullSpan).ToList();
+        tryStatements = context.SemanticModel.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<TryStatementSyntax>().ToList();
       }
 
-      if (tryBlockSpans.Count(span => span.Contains(context.Node.Span)) == 0)
+      if (tryStatements.Count(span => span.Contains(context.Node)) == 0)
       {
-        //nincs trycatch körülötte - meg kell nézni a szimbólum összes referenciáját
-
-        ISymbol symbol = context.ContainingSymbol;
-        if (symbol != null)
+        //nincs try-catch a blokk körül: lehet, hogy nem is kell köré
+        //ez akkor fordulhat elő, hogyha a blokkban csak és kizárólag trystatement van.
+        if (context.Node.ChildNodes().Count(cn => cn.Kind() != SyntaxKind.TryStatement) > 0)
         {
-          //a symbol, ami tartalmazza a block-ot - ennek meg tudjuk nézni a referenciáit
-          IEnumerable<ReferencedSymbol> refs = SymbolFinder.FindReferencesAsync(symbol, null, context.CancellationToken).Result;
+          //meg kell nézni a szülő szimbólum összes referenciáját
+          IMethodSymbol _sym = context.ContainingSymbol as IMethodSymbol;
 
-          bool covered = true;
-          if (refs != null)
+          if (_sym != null)
           {
-            foreach (ReferencedSymbol rs in refs)
+            MethodInvocationsCollector mic = new MethodInvocationsCollector(context.SemanticModel, _sym, null, false, context.CancellationToken);
+            mic.Visit(context.SemanticModel.SyntaxTree.GetRoot());
+
+            bool allReferencesCovered = mic.Invocations.Count > 0;
+            foreach (var micres in mic.Invocations)
             {
-              if (rs.Locations != null)
+              if (tryStatements.Count(span => span.Contains(micres.InvocationSyntax)) == 0)
               {
-                foreach (ReferenceLocation loc in rs.Locations)
-                {
-                  if (tryBlockSpans.Count(span => span.Contains(loc.Location.SourceSpan)) == 0)
-                  {
-                    covered = false;
-                    break;
-                  }
-                }
+                allReferencesCovered = false;
+                break;
               }
             }
-          }
 
-          //minden referenciánk le van fedve trycatch-el?
-          if (!covered)
-          {
-            Diagnostic diagnostic = Diagnostic.Create(Rule, context.Node.GetLocation());
-            context.ReportDiagnostic(diagnostic);
+            if (!allReferencesCovered)
+            {
+              Diagnostic diagnostic = Diagnostic.Create(Rule, context.Node.GetLocation());
+              context.ReportDiagnostic(diagnostic);
+            }
           }
         }
       }
@@ -85,7 +80,7 @@ namespace Janitor
     private void CollectTryBlocks(SyntaxNodeAnalysisContext context)
     {
       //Összeszedem az összes try-ban lévő code block helyét.
-      tryBlockSpans = context.SemanticModel.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<TryStatementSyntax>().Where(tc => tc.Block != null).Select(tc => tc.Block.FullSpan).ToList();
+      tryStatements = context.SemanticModel.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<TryStatementSyntax>().ToList();
     }
   }
 }

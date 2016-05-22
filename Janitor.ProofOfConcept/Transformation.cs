@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Janitor.ProofOfConcept
 {
-  class SyntaxTransformation
+  public class Transformation
   {
   }
 }

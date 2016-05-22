@@ -15,7 +15,7 @@ namespace Janitor
   [DiagnosticAnalyzer(LanguageNames.CSharp)]
   public class RegularExpressionAnalyzer : DiagnosticAnalyzer
   {
-    public const string DiagnosticId = "Janitor";
+    public const string DiagnosticId = "JN0003";
 
     //Lokalizált string-ek
     private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.RegularExpressionAnalyzerTitle), Resources.ResourceManager, typeof(Resources));

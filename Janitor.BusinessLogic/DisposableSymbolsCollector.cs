@@ -60,6 +60,26 @@ namespace Janitor.BusinessLogic
       return null;
     }
 
+    public DisposableSymbolData ProcessPropertyDeclaration(PropertyDeclarationSyntax node)
+    {
+      ISymbol info = Model.GetDeclaredSymbol(node, CancellationToken);
+
+      if (info is IPropertySymbol)
+      {
+        IPropertySymbol propSymbol = info as IPropertySymbol;
+        INamedTypeSymbol intface = propSymbol.Type.AllInterfaces.SingleOrDefault(iface => iface.Name == "IDisposable" && iface.ToDisplayString(sdf) == "System.IDisposable");
+        if (intface != null)
+        {
+          ISymbol disposeMethod = intface.GetMembers("Dispose").FirstOrDefault();
+          ISymbol implDisposeMethod = propSymbol.Type.FindImplementationForInterfaceMember(disposeMethod);
+
+          return new DisposableSymbolData() { DisposableSymbol = propSymbol, DisposeMethodSymbol = implDisposeMethod as IMethodSymbol };
+        }
+      }
+
+      return null;
+    }
+
     public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
     {
       DisposableSymbolData data = ProcessVariableDeclarator(node);
@@ -70,6 +90,18 @@ namespace Janitor.BusinessLogic
       }
       
       base.VisitVariableDeclarator(node);
+    }
+
+    public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+    {
+      DisposableSymbolData data = ProcessPropertyDeclaration(node);
+
+      if (data != null)
+      {
+        SymbolsRequiringDispose.Add(data);
+      }
+
+      base.VisitPropertyDeclaration(node);
     }
   }
 }

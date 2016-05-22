@@ -89,7 +89,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
+        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement. This notfication is not shown for code blocks being either in catch or finally statements..
         /// </summary>
         internal static string MissingTryCatchAnalyzerDescription {
             get {
