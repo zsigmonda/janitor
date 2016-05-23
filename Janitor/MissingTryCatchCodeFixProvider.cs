@@ -67,9 +67,9 @@ namespace Janitor
         SyntaxList<CatchClauseSyntax> catchClauses = new SyntaxList<CatchClauseSyntax>().Add
           (SyntaxFactory.CatchClause(
             SyntaxFactory.Token(SyntaxKind.CatchKeyword),
-            SyntaxFactory.CatchDeclaration(SyntaxFactory.IdentifierName("System.Exception")),
+            SyntaxFactory.CatchDeclaration(SyntaxFactory.IdentifierName("Exception")),
             null,
-            SyntaxFactory.Block()));
+            SyntaxFactory.Block(SyntaxFactory.ThrowStatement())));
 
         SyntaxNode newNode = SyntaxFactory.Block(
           SyntaxFactory.TryStatement(

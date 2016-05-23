@@ -45,6 +45,14 @@
       <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.2\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.2\lib\net45\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.2\lib\net45\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.2\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
@@ -59,24 +67,24 @@
       <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\dotnet\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.30\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Composition.Convention, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.30\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Composition.Hosting, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.30\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Composition.Runtime, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.30\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Composition.TypedParts, Version=1.0.30.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Composition.1.0.30\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
@@ -99,19 +107,17 @@
     <Compile Include="Analysis.cs" />
     <Compile Include="SymbolReferenceCollector.cs" />
     <Compile Include="Transformation.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Janitor.BusinessLogic\Janitor.BusinessLogic.csproj">
-      <Project>{80cb68f3-65e6-4e3d-a082-316e49db02ad}</Project>
-      <Name>Janitor.BusinessLogic</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Janitor.BusinessLogic\Janitor.BusinessLogic.csproj">
+      <Project>{300423bd-f88e-4ea5-9e69-84ec4fbba294}</Project>
+      <Name>Janitor.BusinessLogic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
