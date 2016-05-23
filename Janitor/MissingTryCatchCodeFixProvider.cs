@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Janitor.BusinessLogic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -48,6 +49,8 @@ namespace Janitor
                 equivalenceKey: title),
             diagnostic);
       }
+
+      Logger.Instance.LogInformation("MissingTryCatchCodeFixProvider registered.");
     }
 
     private async Task<Solution> FixMissingTryCatchAsync(Document document, BlockSyntax codeBlock, CancellationToken cancellationToken)
@@ -83,9 +86,13 @@ namespace Janitor
 
         newSolution = originalSolution.WithDocumentSyntaxRoot(document.Id, syntaxEditor.GetChangedRoot());
       }
+      catch (OperationCanceledException)
+      {
+        Logger.Instance.LogInformation("Operation cancelled through CancellationToken.");
+      }
       catch (Exception ex)
       {
-        ;
+        Logger.Instance.LogError("Error occured.", ex);
       }
       return newSolution;
     }

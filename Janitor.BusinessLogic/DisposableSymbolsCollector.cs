@@ -6,27 +6,60 @@ using System.Linq;
 
 namespace Janitor.BusinessLogic
 {
+  /// <summary>
+  /// Ez az osztály tárolja egy szimbólumról, hogy melyik metódusa származik az IDisposable interfészből.
+  /// </summary>
   public class DisposableSymbolData
   {
+    /// <summary>
+    /// A szimbólum, amely implementálja az IDisposable interfészt.
+    /// </summary>
     public ISymbol DisposableSymbol { get; set; }
+    
+    /// <summary>
+    /// A szimbólumhoz tartozó public void Dispose() metódus szimbóluma.
+    /// </summary>
     public IMethodSymbol DisposeMethodSymbol { get; set; }
   }
 
+  /// <summary>
+  /// Ez az osztály képes kigyűjteni az összes olyan szimbólumot egy modellből, amely implementálja az IDisposable interfészt.
+  /// </summary>
   public class DisposableSymbolsCollector : CSharpSyntaxWalker
   {
+    /// <summary>
+    /// Azon szimbólumok listája, amelyek implementálják az IDisposable interfészt.
+    /// </summary>
     public readonly List<DisposableSymbolData> SymbolsRequiringDispose = new List<DisposableSymbolData>();
 
     private readonly SymbolDisplayFormat sdf = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
+    /// <summary>
+    /// A szimbólumokat tartalmazó modell, amelyen az elemzést végezzük. Csak konstruktorban adható meg.
+    /// </summary>
     public SemanticModel Model { get; private set; }
+
+    /// <summary>
+    /// A cancellationToken objektum, amellyel az elemzés futása megszakítható. Csak konstruktorban adható meg.
+    /// </summary>
     public System.Threading.CancellationToken CancellationToken { get; private set; }
 
+    /// <summary>
+    /// Létrehozza az osztály egy példányát, és elvégzi annak inicializálását.
+    /// </summary>
+    /// <param name="model">A szimbólumokat tartalmazó modell, amelyen az elemzést végezzük.</param>
+    /// <param name="cancellationToken">A cancellationToken objektum, amellyel az elemzés futása megszakítható.</param>
     public DisposableSymbolsCollector(SemanticModel model, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
       this.CancellationToken = cancellationToken;
     }
 
+    /// <summary>
+    /// Feldolgoz egy helyi változót vagy tagváltozót deklaráló syntaxnode-ot, és megmondja, hogy az ott deklarált szimbólum implementálja-e az IDisposable interfészt.
+    /// </summary>
+    /// <param name="node">A syntaxnode, amelyet elemeztetni szeretnénk.</param>
+    /// <returns>A visszatérési érték a szimbólum, hogyha implementálja az IDisposable-t. Ha nem, akkor null.</returns>
     public DisposableSymbolData ProcessVariableDeclarator(VariableDeclaratorSyntax node)
     {
       ISymbol info = Model.GetDeclaredSymbol(node, CancellationToken);
@@ -60,6 +93,11 @@ namespace Janitor.BusinessLogic
       return null;
     }
 
+    /// <summary>
+    /// Feldolgoz egy property-t deklaráló syntaxnode-ot, és megmondja, hogy az ott deklarált szimbólum implementálja-e az IDisposable interfészt.
+    /// </summary>
+    /// <param name="node">A syntaxnode, amelyet elemeztetni szeretnénk.</param>
+    /// <returns>A visszatérési érték a szimbólum, hogyha implementálja az IDisposable-t. Ha nem, akkor null.</returns>
     public DisposableSymbolData ProcessPropertyDeclaration(PropertyDeclarationSyntax node)
     {
       ISymbol info = Model.GetDeclaredSymbol(node, CancellationToken);

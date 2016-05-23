@@ -29,6 +29,7 @@ namespace Janitor
     public override void Initialize(AnalysisContext context)
     {
       context.RegisterSyntaxNodeAction(AnalyzeMissingTryCatch, SyntaxKind.Block);
+      Logger.Instance.LogInformation("MissingTryCatchAnalyzer registered.");
     }
 
     private void AnalyzeMissingTryCatch(SyntaxNodeAnalysisContext context)
@@ -74,13 +75,11 @@ namespace Janitor
       }
       catch (OperationCanceledException)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogInformation("Operation cancelled through CancellationToken.");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogError("Error occured.", ex);
       }
     }
   }

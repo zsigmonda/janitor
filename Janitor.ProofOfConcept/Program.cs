@@ -14,6 +14,8 @@ namespace Janitor.ProofOfConcept
   {
     static void Main(string[] args)
     {
+      Console.WriteLine(DateTime.Now.ToString("yyyy.MM.dd. HH:mm:ss"));
+      Console.WriteLine(System.IO.Path.GetTempPath());
       //Analysis semanticAnalysis = new Analysis(System.IO.Path.Combine(Environment.CurrentDirectory, "Input", "Input1.cs"));
       //semanticAnalysis.DoAnalysis();
 

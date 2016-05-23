@@ -27,6 +27,7 @@ namespace Janitor
     public override void Initialize(AnalysisContext context)
     {
       context.RegisterSyntaxNodeAction(AnalyzeMissingDispose, SyntaxKind.VariableDeclarator, SyntaxKind.PropertyDeclaration);
+      Logger.Instance.LogInformation("MissingDisposeAnalyzer registered.");
     }
 
     private void AnalyzeMissingDispose(SyntaxNodeAnalysisContext context)
@@ -68,13 +69,11 @@ namespace Janitor
       }
       catch (OperationCanceledException)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogInformation("Operation cancelled through CancellationToken.");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogError("Error occured.", ex);
       }
     }
   }

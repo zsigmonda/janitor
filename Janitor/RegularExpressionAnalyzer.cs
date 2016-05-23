@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Janitor.BusinessLogic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -28,6 +29,7 @@ namespace Janitor
     public override void Initialize(AnalysisContext context)
     {
       context.RegisterSyntaxNodeAction(AnalyzeRegularExpression, SyntaxKind.InvocationExpression, SyntaxKind.ObjectCreationExpression);
+      Logger.Instance.LogInformation("RegularExpressionAnalyzer registered.");
     }
 
     private void AnalyzeRegularExpression(SyntaxNodeAnalysisContext context)
@@ -90,13 +92,11 @@ namespace Janitor
       }
       catch (OperationCanceledException)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogInformation("Operation cancelled through CancellationToken.");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //TODO Output windowba írás
-        return;
+        Logger.Instance.LogError("Error occured.", ex);
       }
     }
   }

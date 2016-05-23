@@ -6,14 +6,37 @@ using System.Linq;
 
 namespace Janitor.BusinessLogic
 {
+  /// <summary>
+  /// Ez az osztály visszaadja az összes Using statement-et használó szimbólumot, ami a forráskódban előfordul.
+  /// </summary>
   public class UsingStatementsCollector : CSharpSyntaxWalker
   {
+    /// <summary>
+    /// Az összes, a forráskódban megtalálható Using statement-ek használó szimbólum
+    /// </summary>
     public readonly List<ISymbol> SymbolsWithUsingPattern = new List<ISymbol>();
 
+    /// <summary>
+    /// A szimbólumokat tartalmazó modell, amelyen az elemzést végezzük. Csak konstruktorban adható meg.
+    /// </summary>
     public SemanticModel Model { get; private set; }
+
+    /// <summary>
+    /// A nem elérhető blokkok figyelmen kívül hagyása. Csak konstruktorban adható meg.
+    /// </summary>
     public bool IgnoreUnreachable { get; private set; }
+
+    /// <summary>
+    /// A cancellationToken objektum, amellyel az elemzés futása megszakítható. Csak konstruktorban adható meg.
+    /// </summary>
     public System.Threading.CancellationToken CancellationToken { get; private set; }
 
+    /// <summary>
+    /// Létrehozza az osztály egy példányát, és elvégzi annak inicializálását.
+    /// </summary>
+    /// <param name="model">A szimbólumokat tartalmazó modell, amelyen az elemzést végezzük.</param>
+    /// <param name="ignoreUnreachable">Ez a paraméter megmnodja, hogy figyelmen kívül hagyjuk-e az elérhetetlen blokkokat: true esetén nem adjuk vissza őket, false esetén pedig igen.</param>
+    /// <param name="cancellationToken">A cancellationToken objektum, amellyel az elemzés futása megszakítható.</param>
     public UsingStatementsCollector(SemanticModel model, bool ignoreUnreachable = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
     {
       this.Model = model;
