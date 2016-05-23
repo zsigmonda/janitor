@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
+using System;
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Janitor
 {
@@ -35,16 +33,14 @@ namespace Janitor
 
     public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-      var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+      SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
       foreach (Diagnostic diagnostic in context.Diagnostics)
       {
-        var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-        // Find the type declaration identified by the diagnostic.
+        TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
         BlockSyntax codeBlock = root.FindNode(diagnosticSpan) as BlockSyntax;
 
-        // Register a code action that will invoke the fix.
+        //Regisztráljuk a codefix-et mindegyik diagnostic objecthez
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: title,
@@ -56,30 +52,41 @@ namespace Janitor
 
     private async Task<Solution> FixMissingTryCatchAsync(Document document, BlockSyntax codeBlock, CancellationToken cancellationToken)
     {
-      SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
-      //a blokkot körül kell venni egy try-catch-el: a bemenetként átadott blokk köré kerül egy tc, köré mégegy blokk, és ezt cseréljük le az eredetivel.
-
-      //a solution immutable - emiatt létrehozzuk az újat, amiben megtörtént a blokk felvétele, és visszaadjuk azt.
       Solution originalSolution = document.Project.Solution;
-      Microsoft.CodeAnalysis.Editing.SyntaxEditor syntaxEditor = new Microsoft.CodeAnalysis.Editing.SyntaxEditor(root, document.Project.Solution.Workspace);
+      Solution newSolution = originalSolution;
 
-      SyntaxList<CatchClauseSyntax> catchClauses = new SyntaxList<CatchClauseSyntax>().Add
-        (SyntaxFactory.CatchClause(
-          SyntaxFactory.Token(SyntaxKind.CatchKeyword),
-          SyntaxFactory.CatchDeclaration(SyntaxFactory.IdentifierName("System.Exception")),
-          null,
-          SyntaxFactory.Block()));
+      try
+      {
+        SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
+        //A blokkot körül kell venni egy try-catch-el: a bemenetként átadott blokk köré kerül egy tc, köré mégegy blokk, és ezt cseréljük le az eredetivel.
 
-      SyntaxNode newNode = SyntaxFactory.Block(
-        SyntaxFactory.TryStatement(
-          SyntaxFactory.Token(SyntaxKind.TryKeyword),
-          codeBlock,
-          catchClauses,
-          null));
+        //A solution immutable - emiatt létrehozzuk az újat, amiben megtörtént a blokk felvétele, és visszaadjuk azt.
 
-      syntaxEditor.ReplaceNode(codeBlock, newNode);
+        Microsoft.CodeAnalysis.Editing.SyntaxEditor syntaxEditor = new Microsoft.CodeAnalysis.Editing.SyntaxEditor(root, document.Project.Solution.Workspace);
 
-      Solution newSolution = originalSolution.WithDocumentSyntaxRoot(document.Id, syntaxEditor.GetChangedRoot());
+        SyntaxList<CatchClauseSyntax> catchClauses = new SyntaxList<CatchClauseSyntax>().Add
+          (SyntaxFactory.CatchClause(
+            SyntaxFactory.Token(SyntaxKind.CatchKeyword),
+            SyntaxFactory.CatchDeclaration(SyntaxFactory.IdentifierName("System.Exception")),
+            null,
+            SyntaxFactory.Block()));
+
+        SyntaxNode newNode = SyntaxFactory.Block(
+          SyntaxFactory.TryStatement(
+            SyntaxFactory.Token(SyntaxKind.TryKeyword),
+            codeBlock,
+            catchClauses,
+            null));
+
+        //Meg is kell formázni a kódot, hogy szépen nézzen ki
+        syntaxEditor.ReplaceNode(codeBlock, newNode.WithAdditionalAnnotations(Formatter.Annotation));
+
+        newSolution = originalSolution.WithDocumentSyntaxRoot(document.Id, syntaxEditor.GetChangedRoot());
+      }
+      catch (Exception ex)
+      {
+        ;
+      }
       return newSolution;
     }
   }

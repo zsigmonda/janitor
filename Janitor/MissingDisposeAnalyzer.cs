@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Immutable;
+using Janitor.BusinessLogic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Janitor.BusinessLogic;
+using System;
+using System.Collections.Immutable;
 
 namespace Janitor
 {
@@ -38,7 +38,6 @@ namespace Janitor
 
         DisposableSymbolsCollector collector = new DisposableSymbolsCollector(model, context.CancellationToken);
 
-
         DisposableSymbolData data = null;
 
         if (context.Node.Kind() == SyntaxKind.VariableDeclarator)
@@ -54,6 +53,8 @@ namespace Janitor
         {
           UsingStatementsCollector upc = new UsingStatementsCollector(model, true, context.CancellationToken);
           upc.Visit(tree.GetRoot());
+
+          context.CancellationToken.ThrowIfCancellationRequested();
 
           MethodInvocationsCollector mic = new MethodInvocationsCollector(model, data.DisposeMethodSymbol, data.DisposableSymbol, true, context.CancellationToken);
           mic.Visit(tree.GetRoot());

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Janitor.BusinessLogic;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Janitor
 {
@@ -36,51 +32,54 @@ namespace Janitor
 
     private void AnalyzeRegularExpression(SyntaxNodeAnalysisContext context)
     {
-      IMethodSymbol methodSymbol = context.SemanticModel.GetSymbolInfo(context.Node, context.CancellationToken).Symbol as IMethodSymbol;
-
-      if (methodSymbol != null && (methodSymbol.Name == "Match" || methodSymbol.Name == "IsMatch" || methodSymbol.Name == "Matches" || methodSymbol.Name == ".ctor"))
+      try
       {
-        if (methodSymbol.ContainingType != null && methodSymbol.ContainingType.ToDisplayString(sdf) == "System.Text.RegularExpressions.Regex")
+        IMethodSymbol methodSymbol = context.SemanticModel.GetSymbolInfo(context.Node, context.CancellationToken).Symbol as IMethodSymbol;
+
+        if (methodSymbol != null && (methodSymbol.Name == "Match" || methodSymbol.Name == "IsMatch" || methodSymbol.Name == "Matches" || methodSymbol.Name == ".ctor"))
         {
-          IParameterSymbol patternParameter = methodSymbol.Parameters.SingleOrDefault(p => p.Name == "pattern");
-
-          if (patternParameter != null)
+          if (methodSymbol.ContainingType != null && methodSymbol.ContainingType.ToDisplayString(sdf) == "System.Text.RegularExpressions.Regex")
           {
-            ArgumentListSyntax argumentList = null;
-            if (context.Node.Kind() == SyntaxKind.ObjectCreationExpression)
+            IParameterSymbol patternParameter = methodSymbol.Parameters.SingleOrDefault(p => p.Name == "pattern");
+
+            if (patternParameter != null)
             {
-              argumentList = (context.Node as ObjectCreationExpressionSyntax).ArgumentList as ArgumentListSyntax;
-            }
-            else
-            {
-              if (context.Node.Kind() == SyntaxKind.InvocationExpression)
+              ArgumentListSyntax argumentList = null;
+              if (context.Node.Kind() == SyntaxKind.ObjectCreationExpression)
               {
-                argumentList = (context.Node as InvocationExpressionSyntax).ArgumentList as ArgumentListSyntax;
+                argumentList = (context.Node as ObjectCreationExpressionSyntax).ArgumentList as ArgumentListSyntax;
               }
-            }
-
-            if (argumentList != null)
-            {
-              LiteralExpressionSyntax regexLiteral = argumentList.Arguments[patternParameter.Ordinal].Expression as LiteralExpressionSyntax;
-
-              if (regexLiteral != null)
+              else
               {
-                var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
-
-                if (regexOpt.HasValue)
+                if (context.Node.Kind() == SyntaxKind.InvocationExpression)
                 {
-                  string regex = regexOpt.Value as string;
-                  if (regex != null)
-                  {
+                  argumentList = (context.Node as InvocationExpressionSyntax).ArgumentList as ArgumentListSyntax;
+                }
+              }
 
-                    try
+              if (argumentList != null)
+              {
+                LiteralExpressionSyntax regexLiteral = argumentList.Arguments[patternParameter.Ordinal].Expression as LiteralExpressionSyntax;
+
+                if (regexLiteral != null)
+                {
+                  var regexOpt = context.SemanticModel.GetConstantValue(regexLiteral, context.CancellationToken);
+
+                  if (regexOpt.HasValue)
+                  {
+                    string regex = regexOpt.Value as string;
+                    if (regex != null)
                     {
-                      System.Text.RegularExpressions.Regex.Match("", regex);
-                    }
-                    catch (ArgumentException e)
-                    {
-                      Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
-                      context.ReportDiagnostic(diagnostic);
+
+                      try
+                      {
+                        System.Text.RegularExpressions.Regex.Match("", regex);
+                      }
+                      catch (ArgumentException e)
+                      {
+                        Diagnostic diagnostic = Diagnostic.Create(Rule, regexLiteral.GetLocation(), e.Message);
+                        context.ReportDiagnostic(diagnostic);
+                      }
                     }
                   }
                 }
@@ -88,6 +87,16 @@ namespace Janitor
             }
           }
         }
+      }
+      catch (OperationCanceledException)
+      {
+        //TODO Output windowba írás
+        return;
+      }
+      catch (Exception)
+      {
+        //TODO Output windowba írás
+        return;
       }
     }
   }
