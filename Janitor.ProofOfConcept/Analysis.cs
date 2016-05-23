@@ -14,7 +14,7 @@ using Janitor.BusinessLogic;
 
 namespace Janitor.ProofOfConcept
 {
-  class Analysis
+  public class Analysis
   {
     private string m_sourceCode;
 

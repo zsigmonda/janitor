@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="MissingDisposeAnalyzer.cs" />
     <Compile Include="MissingTryCatchAnalyzer.cs" />
+    <Compile Include="MissingTryCatchCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegularExpressionAnalyzer.cs" />
     <Compile Include="Resources.Designer.cs">

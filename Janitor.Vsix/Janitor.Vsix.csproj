@@ -53,6 +53,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Janitor.BusinessLogic\Janitor.BusinessLogic.csproj">
+      <Project>{80cb68f3-65e6-4e3d-a082-316e49db02ad}</Project>
+      <Name>Janitor.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Janitor\Janitor.csproj">
       <Project>{DDC4D7F7-D994-4356-B52C-FD39C3E80DD5}</Project>
       <Name>Janitor</Name>

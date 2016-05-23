@@ -14,8 +14,11 @@ namespace Janitor.ProofOfConcept
   {
     static void Main(string[] args)
     {
-      Analysis semanticAnalysis = new Analysis(System.IO.Path.Combine(Environment.CurrentDirectory, "Input", "Input1.cs"));
-      semanticAnalysis.DoAnalysis();
+      //Analysis semanticAnalysis = new Analysis(System.IO.Path.Combine(Environment.CurrentDirectory, "Input", "Input1.cs"));
+      //semanticAnalysis.DoAnalysis();
+
+      Transformation syntaxTransformation = new Transformation(System.IO.Path.Combine(Environment.CurrentDirectory, "Input", "Input1.cs"));
+      syntaxTransformation.DoTransformation();
     }
   }
 }
