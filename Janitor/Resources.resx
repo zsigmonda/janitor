@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MissingDisposeAnalyzerDescription" xml:space="preserve">
-    <value>Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using within a using block statement.</value>
+    <value>Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or be used within a Using block statement.</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="MissingDisposeAnalyzerMessageFormat" xml:space="preserve">
@@ -130,15 +130,15 @@
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="MissingTryCatchAnalyzerDescription" xml:space="preserve">
-    <value>Code block is not covered with a try-catch statement. This notfication is not shown for code blocks being either in catch or finally statements.</value>
+    <value>Code block is not completely covered with a Try-Catch statement. This notfication is not shown for code blocks being either in Catch or Finally statements.</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="MissingTryCatchAnalyzerMessageFormat" xml:space="preserve">
-    <value>Code block is not covered with a try-catch statement.</value>
+    <value>Code block is not covered with a Try-Catch statement.</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="MissingTryCatchAnalyzerTitle" xml:space="preserve">
-    <value>Code block is not covered with a try-catch statement.</value>
+    <value>Code block is not covered with a Try-Catch statement.</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="RegularExpressionAnalyzerDescription" xml:space="preserve">
@@ -146,7 +146,7 @@
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="RegularExpressionAnalyzerMessageFormat" xml:space="preserve">
-    <value>Invalid regular expression syntax: {0}</value>
+    <value>Invalid regular expression syntax: {0}.</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="RegularExpressionAnalyzerTitle" xml:space="preserve">

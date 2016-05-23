@@ -62,7 +62,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or using within a using block statement..
+        ///   Looks up a localized string similar to Instances of classes implementing System.IDisposable interface should always be disposed properly by calling Dispose() method or be used within a Using block statement..
         /// </summary>
         internal static string MissingDisposeAnalyzerDescription {
             get {
@@ -89,7 +89,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement. This notfication is not shown for code blocks being either in catch or finally statements..
+        ///   Looks up a localized string similar to Code block is not completely covered with a Try-Catch statement. This notfication is not shown for code blocks being either in Catch or Finally statements..
         /// </summary>
         internal static string MissingTryCatchAnalyzerDescription {
             get {
@@ -98,7 +98,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
+        ///   Looks up a localized string similar to Code block is not covered with a Try-Catch statement..
         /// </summary>
         internal static string MissingTryCatchAnalyzerMessageFormat {
             get {
@@ -107,7 +107,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code block is not covered with a try-catch statement..
+        ///   Looks up a localized string similar to Code block is not covered with a Try-Catch statement..
         /// </summary>
         internal static string MissingTryCatchAnalyzerTitle {
             get {
@@ -125,7 +125,7 @@ namespace Janitor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid regular expression syntax: {0}.
+        ///   Looks up a localized string similar to Invalid regular expression syntax: {0}..
         /// </summary>
         internal static string RegularExpressionAnalyzerMessageFormat {
             get {

@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janitor", "Janitor\Janitor.csproj", "{DDC4D7F7-D994-4356-B52C-FD39C3E80DD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janitor.Test", "Janitor.Test\Janitor.Test.csproj", "{286D4BC7-FC37-472D-A791-31733E47951E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janitor.Vsix", "Janitor.Vsix\Janitor.Vsix.csproj", "{6FF9C964-09F7-48C3-9327-73C091CAA26B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janitor.ProofOfConcept", "Janitor.ProofOfConcept\Janitor.ProofOfConcept.csproj", "{EDDECC5C-98AB-41BD-B702-AD91D739AFCC}"
@@ -36,14 +34,6 @@ Global
 		{DDC4D7F7-D994-4356-B52C-FD39C3E80DD5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDC4D7F7-D994-4356-B52C-FD39C3E80DD5}.Release|x86.ActiveCfg = Release|Any CPU
 		{DDC4D7F7-D994-4356-B52C-FD39C3E80DD5}.Release|x86.Build.0 = Release|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Debug|x86.Build.0 = Debug|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Release|x86.ActiveCfg = Release|Any CPU
-		{286D4BC7-FC37-472D-A791-31733E47951E}.Release|x86.Build.0 = Release|Any CPU
 		{6FF9C964-09F7-48C3-9327-73C091CAA26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FF9C964-09F7-48C3-9327-73C091CAA26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FF9C964-09F7-48C3-9327-73C091CAA26B}.Debug|x86.ActiveCfg = Debug|Any CPU
